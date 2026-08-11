@@ -64,49 +64,80 @@ export async function POST(req: Request) {
         const spreadsheetInfo = await sheets.spreadsheets.get({ spreadsheetId: masterSheetId });
         
         // --- A. Pestaña de Reglas de Negocio ---
-        const hasReglasTab = spreadsheetInfo.data.sheets?.some(
-          sheet => sheet.properties?.title === 'Reglas de Negocio'
+        const reglasTabTitle = 'Reglas de Negocio';
+        let reglasSheetId = null;
+        const existingReglasTab = spreadsheetInfo.data.sheets?.find(
+          sheet => sheet.properties?.title === reglasTabTitle
         );
 
-        if (!hasReglasTab) {
-          await sheets.spreadsheets.batchUpdate({
-            spreadsheetId: masterSheetId,
-            requestBody: { requests: [{ addSheet: { properties: { title: 'Reglas de Negocio' } } }] }
-          });
-          // Headers
-          await sheets.spreadsheets.values.append({
-            spreadsheetId: masterSheetId,
-            range: 'Reglas de Negocio!A1',
-            valueInputOption: 'USER_ENTERED',
-            requestBody: { values: [['Regla de Negocio']] },
-          });
-        } else {
-          // Limpiar las reglas anteriores si están reescribiendo
-          // Limpiamos todo A:Z para asegurar que no queden columnas viejas de pruebas anteriores (como Cliente o Correo)
+        if (existingReglasTab) {
+          reglasSheetId = existingReglasTab.properties?.sheetId;
+          // Limpiamos todo para que no queden columnas viejas, pero mantenemos las reglas desde A3 hacia abajo intactas.
+          // En este caso, si están reescribiendo desde el formulario, limpiamos A1:A2. Si no queremos borrar reglas anteriores, 
+          // solo limpiamos encabezados. PERO el requerimiento original era limpiar todo. 
+          // El usuario pidió: "que si le falto añadir puede complementar esta informacion de forma manual"
+          // Así que limpiemos solo A1:A2 para no borrar lo que añadan a mano en A3 hacia abajo!
           await sheets.spreadsheets.values.clear({
             spreadsheetId: masterSheetId,
-            range: `'Reglas de Negocio'!A:Z`
+            range: `'${reglasTabTitle}'!A1:Z2`
           });
-          // Re-escribimos el header porque acabamos de limpiar todo
-          await sheets.spreadsheets.values.append({
+        } else {
+          const addSheetResponse = await sheets.spreadsheets.batchUpdate({
             spreadsheetId: masterSheetId,
-            range: 'Reglas de Negocio!A1',
-            valueInputOption: 'USER_ENTERED',
-            requestBody: { values: [['Regla de Negocio']] },
+            requestBody: { requests: [{ addSheet: { properties: { title: reglasTabTitle } } }] }
           });
+          reglasSheetId = addSheetResponse.data.replies?.[0]?.addSheet?.properties?.sheetId;
         }
+
+        const reglasInstruction = [
+          ['💡 Guía de Reglas de Negocio: Una regla de negocio es una condición o directriz que afecta un precio, un servicio o una respuesta (ej. "Si el cliente está fuera de la ciudad, cobrar $100.000 de viáticos" o "Siempre pedir un anticipo del 50%").\nSi te faltó añadir alguna regla, puedes escribirla de forma manual aquí abajo.'],
+          ['Regla de Negocio']
+        ];
+
+        await sheets.spreadsheets.values.update({
+          spreadsheetId: masterSheetId,
+          range: `'${reglasTabTitle}'!A1`,
+          valueInputOption: 'USER_ENTERED',
+          requestBody: { values: reglasInstruction }
+        });
 
         if (reglasNegocio) {
           const reglasArray = reglasNegocio.split('\n').map((r: string) => r.trim()).filter((r: string) => r !== '').map((r: string) => [r.replace(/^-/, '').trim()]);
           
           if (reglasArray.length > 0) {
+            // Re-escribir las reglas que vengan del form. Si queremos acumular, usamos append, pero como limpiamos solo A1:A2, append agregará ABAJO de lo que exista.
             await sheets.spreadsheets.values.append({
               spreadsheetId: masterSheetId,
-              range: 'Reglas de Negocio!A2:A',
+              range: `'${reglasTabTitle}'!A3:A`,
               valueInputOption: 'USER_ENTERED',
               requestBody: { values: reglasArray },
             });
           }
+        }
+
+        if (reglasSheetId !== null && reglasSheetId !== undefined) {
+          await sheets.spreadsheets.batchUpdate({
+            spreadsheetId: masterSheetId,
+            requestBody: {
+              requests: [
+                { updateDimensionProperties: { range: { sheetId: reglasSheetId, dimension: 'COLUMNS', startIndex: 0, endIndex: 1 }, properties: { pixelSize: 1000 }, fields: 'pixelSize' } },
+                {
+                  repeatCell: {
+                    range: { sheetId: reglasSheetId, startRowIndex: 0, endRowIndex: 1, startColumnIndex: 0, endColumnIndex: 1 },
+                    cell: { userEnteredFormat: { backgroundColor: { red: 0.9, green: 0.95, blue: 0.9 }, textFormat: { foregroundColor: { red: 0.05, green: 0.17, blue: 0.11 }, bold: true }, horizontalAlignment: 'CENTER', wrapStrategy: 'WRAP' } },
+                    fields: 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,wrapStrategy)'
+                  }
+                },
+                {
+                  repeatCell: {
+                    range: { sheetId: reglasSheetId, startRowIndex: 1, endRowIndex: 2, startColumnIndex: 0, endColumnIndex: 1 },
+                    cell: { userEnteredFormat: { backgroundColor: { red: 0.05, green: 0.17, blue: 0.11 }, textFormat: { foregroundColor: { red: 1, green: 1, blue: 1 }, bold: true }, horizontalAlignment: 'CENTER' } },
+                    fields: 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment)'
+                  }
+                }
+              ]
+            }
+          });
         }
 
         // --- B. Pestaña dedicada para el Brief Vertical ---
@@ -135,6 +166,7 @@ export async function POST(req: Request) {
 
         // Datos Verticales
         const verticalData = [
+          ['💡 Guía del Brief: Este es el resumen de la configuración de tu Agente.\nSi te faltó alguna información o necesitas corregir algo, puedes editar y complementar esta hoja manualmente.', ''],
           ['🎯 INFORMACIÓN GENERAL', ''],
           ['Nombre del Contacto', nombreContacto],
           ['Correo Electrónico', correo],
@@ -180,18 +212,28 @@ export async function POST(req: Request) {
                 { updateDimensionProperties: { range: { sheetId: sheetId, dimension: 'COLUMNS', startIndex: 0, endIndex: 1 }, properties: { pixelSize: 250 }, fields: 'pixelSize' } },
                 // Ajustar ancho de la columna B (Respuesta)
                 { updateDimensionProperties: { range: { sheetId: sheetId, dimension: 'COLUMNS', startIndex: 1, endIndex: 2 }, properties: { pixelSize: 450 }, fields: 'pixelSize' } },
-                // Formato para los títulos (Fila 1, 7, 14, 19)
-                ...[0, 6, 13, 18].map(rowIndex => ({
+                // Combinar la primera celda para la guía
+                { mergeCells: { range: { sheetId: sheetId, startRowIndex: 0, endRowIndex: 1, startColumnIndex: 0, endColumnIndex: 2 }, mergeType: 'MERGE_ALL' } },
+                // Formato Fila 1 (Instrucciones)
+                {
+                  repeatCell: {
+                    range: { sheetId: sheetId, startRowIndex: 0, endRowIndex: 1, startColumnIndex: 0, endColumnIndex: 2 },
+                    cell: { userEnteredFormat: { backgroundColor: { red: 0.9, green: 0.95, blue: 0.9 }, textFormat: { foregroundColor: { red: 0.05, green: 0.17, blue: 0.11 }, bold: true }, horizontalAlignment: 'CENTER', wrapStrategy: 'WRAP' } },
+                    fields: 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,wrapStrategy)'
+                  }
+                },
+                // Formato para los títulos (ahora desplazados 1 fila: Fila 2, 8, 15, 20 => indices 1, 7, 14, 19)
+                ...[1, 7, 14, 19].map(rowIndex => ({
                   repeatCell: {
                     range: { sheetId: sheetId, startRowIndex: rowIndex, endRowIndex: rowIndex + 1, startColumnIndex: 0, endColumnIndex: 2 },
                     cell: { userEnteredFormat: { backgroundColor: { red: 0.05, green: 0.17, blue: 0.11 }, textFormat: { foregroundColor: { red: 1, green: 1, blue: 1 }, bold: true } } },
                     fields: 'userEnteredFormat(backgroundColor,textFormat)'
                   }
                 })),
-                // Formato para las celdas de "Campo" (Columna A)
+                // Formato para las celdas de "Campo" (Columna A) desde la fila 3
                 {
                   repeatCell: {
-                    range: { sheetId: sheetId, startColumnIndex: 0, endColumnIndex: 1 },
+                    range: { sheetId: sheetId, startRowIndex: 2, startColumnIndex: 0, endColumnIndex: 1 },
                     cell: { userEnteredFormat: { textFormat: { bold: true } } },
                     fields: 'userEnteredFormat.textFormat.bold'
                   }
