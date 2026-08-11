@@ -200,6 +200,75 @@ export async function POST(req: Request) {
             }
           });
         }
+
+        // --- C. Pestaña Valores ---
+        const valoresTabTitle = 'Valores';
+        let valoresSheetId = null;
+        const existingValoresTab = spreadsheetInfo.data.sheets?.find(
+          sheet => sheet.properties?.title === valoresTabTitle
+        );
+
+        if (existingValoresTab) {
+          valoresSheetId = existingValoresTab.properties?.sheetId;
+          // Limpiamos solo los encabezados anteriores (Fila 1 y 2) para no borrar la data del cliente abajo
+          await sheets.spreadsheets.values.clear({
+            spreadsheetId: masterSheetId,
+            range: `'${valoresTabTitle}'!A1:D2`
+          });
+        } else {
+          const addSheetResponse = await sheets.spreadsheets.batchUpdate({
+            spreadsheetId: masterSheetId,
+            requestBody: { requests: [{ addSheet: { properties: { title: valoresTabTitle } } }] }
+          });
+          valoresSheetId = addSheetResponse.data.replies?.[0]?.addSheet?.properties?.sheetId;
+        }
+
+        // Datos para Valores
+        const valoresData = [
+          ['Guía de Valores: Ingresa la descripción, el valor por unidad o m2, y observaciones importantes (ej. aclarar si el precio varía según la cantidad o el tipo de acabado).\n💡 NOTA: Si ya tienes archivos de valores, puedes cargarlos directamente en la carpeta de Drive y no será necesario diligenciar esta hoja de forma manual.', '', '', ''],
+          ['Descripción', 'Valor (Unidad / m2)', 'Observaciones', '']
+        ];
+
+        await sheets.spreadsheets.values.update({
+          spreadsheetId: masterSheetId,
+          range: `'${valoresTabTitle}'!A1`,
+          valueInputOption: 'USER_ENTERED',
+          requestBody: { values: valoresData }
+        });
+
+        if (valoresSheetId !== null && valoresSheetId !== undefined) {
+          await sheets.spreadsheets.batchUpdate({
+            spreadsheetId: masterSheetId,
+            requestBody: {
+              requests: [
+                // Ajustar anchos de columnas
+                { updateDimensionProperties: { range: { sheetId: valoresSheetId, dimension: 'COLUMNS', startIndex: 0, endIndex: 1 }, properties: { pixelSize: 300 }, fields: 'pixelSize' } },
+                { updateDimensionProperties: { range: { sheetId: valoresSheetId, dimension: 'COLUMNS', startIndex: 1, endIndex: 2 }, properties: { pixelSize: 200 }, fields: 'pixelSize' } },
+                { updateDimensionProperties: { range: { sheetId: valoresSheetId, dimension: 'COLUMNS', startIndex: 2, endIndex: 3 }, properties: { pixelSize: 500 }, fields: 'pixelSize' } },
+                // Descombinar A1:D1 por si ya estaba combinada, para evitar errores
+                { unmergeCells: { range: { sheetId: valoresSheetId, startRowIndex: 0, endRowIndex: 1, startColumnIndex: 0, endColumnIndex: 4 } } },
+                // Combinar celdas A1:D1
+                { mergeCells: { range: { sheetId: valoresSheetId, startRowIndex: 0, endRowIndex: 1, startColumnIndex: 0, endColumnIndex: 4 }, mergeType: 'MERGE_ALL' } },
+                // Formato Fila 1 (Instrucciones)
+                {
+                  repeatCell: {
+                    range: { sheetId: valoresSheetId, startRowIndex: 0, endRowIndex: 1, startColumnIndex: 0, endColumnIndex: 4 },
+                    cell: { userEnteredFormat: { backgroundColor: { red: 0.9, green: 0.95, blue: 0.9 }, textFormat: { foregroundColor: { red: 0.05, green: 0.17, blue: 0.11 }, bold: true }, horizontalAlignment: 'CENTER', wrapStrategy: 'WRAP' } },
+                    fields: 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,wrapStrategy)'
+                  }
+                },
+                // Formato Fila 2 (Headers)
+                {
+                  repeatCell: {
+                    range: { sheetId: valoresSheetId, startRowIndex: 1, endRowIndex: 2, startColumnIndex: 0, endColumnIndex: 4 },
+                    cell: { userEnteredFormat: { backgroundColor: { red: 0.05, green: 0.17, blue: 0.11 }, textFormat: { foregroundColor: { red: 1, green: 1, blue: 1 }, bold: true }, horizontalAlignment: 'CENTER' } },
+                    fields: 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment)'
+                  }
+                }
+              ]
+            }
+          });
+        }
       }
     } catch (sheetError: any) {
       console.error("Error al escribir en Sheets:", sheetError.message);
