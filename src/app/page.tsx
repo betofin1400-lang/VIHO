@@ -656,12 +656,6 @@ export default function Home() {
                     </a>
                   </div>
 
-                  <button 
-                    onClick={handleReset}
-                    className="mt-8 text-sm text-[#0E2B1D]/60 hover:text-[#0E2B1D] underline transition-colors"
-                  >
-                    Hacer otra prueba (Reiniciar)
-                  </button>
                 </div>
               )}
 
