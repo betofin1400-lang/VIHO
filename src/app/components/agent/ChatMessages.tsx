@@ -1,6 +1,6 @@
 'use client';
 
-import { Send, Loader2, Paperclip, X } from 'lucide-react';
+import { Send, Loader2, Paperclip, X, Image as ImageIcon, FileText } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { type ChatMessage } from './chatData';
 
@@ -19,13 +19,11 @@ export default function ChatMessages({ messages, onOptionClick, onSendText, isLo
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Only allow images and PDFs
     if (!file.type.startsWith('image/') && file.type !== 'application/pdf') {
       alert('Solo se permiten imágenes (JPG, PNG) y PDFs.');
       return;
     }
 
-    // Max 10MB
     if (file.size > 10 * 1024 * 1024) {
       alert('El archivo no puede superar 10MB.');
       return;
@@ -42,8 +40,6 @@ export default function ChatMessages({ messages, onOptionClick, onSendText, isLo
       });
     };
     reader.readAsDataURL(file);
-
-    // Reset input so same file can be selected again
     e.target.value = '';
   };
 
@@ -71,38 +67,87 @@ export default function ChatMessages({ messages, onOptionClick, onSendText, isLo
     onOptionClick(option);
   };
 
+  const formatMessageText = (text: string) => {
+    // Simple markdown-like formatting
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/`(.*?)`/g, '<code class="bg-white/10 px-1.5 py-0.5 rounded text-xs">$1</code>')
+      .replace(/\n/g, '<br />');
+  };
+
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/* Messages area */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         {messages.map((msg) => (
           <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div
-              className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-line ${
-                msg.sender === 'user'
-                  ? 'bg-[#DEA71A] text-black rounded-br-md'
-                  : 'bg-[#2A2A2A] text-[#CCCBCD] border border-white/5 rounded-bl-md'
-              }`}
-            >
-              {msg.image && (
-                <div className="mb-2">
-                  <img
-                    src={msg.image.preview}
-                    alt="Archivo adjunto"
-                    className="rounded-lg max-h-40 object-cover"
-                  />
+            <div className={`max-w-[85%] ${msg.sender === 'user' ? 'order-1' : 'order-1'}`}>
+              {/* Agent avatar */}
+              {msg.sender === 'agent' && (
+                <div className="flex items-center gap-2 mb-1.5">
+                  <div className="w-6 h-6 rounded-full bg-[#DEA71A]/20 flex items-center justify-center">
+                    <span className="text-[#DEA71A] text-xs font-bold">V</span>
+                  </div>
+                  <span className="text-[#CCCBCD]/50 text-xs">Asistente VIHO</span>
                 </div>
               )}
-              {msg.text}
-              {msg.options && (
-                <div className="flex flex-wrap gap-2 mt-3">
-                  {msg.options.map((opt) => (
+
+              {/* Message bubble */}
+              <div
+                className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                  msg.sender === 'user'
+                    ? 'bg-gradient-to-br from-[#DEA71A] to-[#E1CB82] text-black rounded-br-md shadow-lg shadow-[#DEA71A]/10'
+                    : 'bg-[#2A2A2A] text-[#E5E5E5] border border-white/5 rounded-bl-md'
+                }`}
+              >
+                {/* Image attachment */}
+                {msg.image && (
+                  <div className="mb-3">
+                    <img
+                      src={msg.image.preview}
+                      alt="Archivo adjunto"
+                      className="rounded-lg max-h-48 object-cover border border-white/10"
+                    />
+                    <div className="flex items-center gap-1.5 mt-1.5 text-xs opacity-60">
+                      {msg.image.mimeType.startsWith('image/') ? (
+                        <ImageIcon size={12} />
+                      ) : (
+                        <FileText size={12} />
+                      )}
+                      <span>Adjunto</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Message text */}
+                <div
+                  className="whitespace-pre-line"
+                  dangerouslySetInnerHTML={{ __html: formatMessageText(msg.text) }}
+                />
+              </div>
+
+              {/* Options as professional buttons */}
+              {msg.options && msg.options.length > 0 && (
+                <div className="mt-3 space-y-2">
+                  {msg.options.map((opt, idx) => (
                     <button
                       key={opt}
                       onClick={() => handleOptionClick(opt)}
                       disabled={isLoading}
-                      className="bg-[#0E2B1D] hover:bg-[#0E2B1D]/80 text-[#DEA71A] border border-[#DEA71A]/30 rounded-full px-3 py-1.5 text-xs font-medium transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full text-left px-4 py-3 rounded-xl bg-[#1A1A1A] hover:bg-[#2A2A2A] border border-[#DEA71A]/20 hover:border-[#DEA71A]/40 text-[#DEA71A] text-sm font-medium transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed group hover:shadow-lg hover:shadow-[#DEA71A]/5"
+                      style={{
+                        animationDelay: `${idx * 50}ms`,
+                        animation: 'fadeInUp 0.3s ease-out forwards',
+                        opacity: 0,
+                      }}
                     >
-                      {opt}
+                      <span className="flex items-center gap-3">
+                        <span className="w-6 h-6 rounded-full bg-[#DEA71A]/10 group-hover:bg-[#DEA71A]/20 flex items-center justify-center text-xs font-bold transition-colors">
+                          {String.fromCharCode(65 + idx)}
+                        </span>
+                        <span>{opt}</span>
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -110,13 +155,32 @@ export default function ChatMessages({ messages, onOptionClick, onSendText, isLo
             </div>
           </div>
         ))}
+
+        {/* Loading indicator */}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-[#2A2A2A] border border-white/5 rounded-2xl rounded-bl-md px-4 py-3">
-              <Loader2 size={18} className="text-[#DEA71A] animate-spin" />
+            <div className="max-w-[85%]">
+              <div className="flex items-center gap-2 mb-1.5">
+                <div className="w-6 h-6 rounded-full bg-[#DEA71A]/20 flex items-center justify-center">
+                  <span className="text-[#DEA71A] text-xs font-bold">V</span>
+                </div>
+                <span className="text-[#CCCBCD]/50 text-xs">Asistente VIHO</span>
+              </div>
+              <div className="bg-[#2A2A2A] border border-white/5 rounded-2xl rounded-bl-md px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1">
+                    <span className="w-2 h-2 bg-[#DEA71A] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="w-2 h-2 bg-[#DEA71A] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <span className="w-2 h-2 bg-[#DEA71A] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
+                  <span className="text-[#CCCBCD]/60 text-xs">Escribiendo...</span>
+                </div>
+              </div>
             </div>
           </div>
         )}
+
+        <div className="h-2" />
       </div>
 
       {/* Pending image preview */}
@@ -126,54 +190,81 @@ export default function ChatMessages({ messages, onOptionClick, onSendText, isLo
             <img
               src={pendingImage.preview}
               alt="Vista previa"
-              className="h-20 rounded-lg border border-white/10"
+              className="h-24 rounded-xl border border-white/10 object-cover"
             />
             <button
               onClick={removePendingImage}
-              className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center"
+              className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors shadow-lg"
             >
-              <X size={12} className="text-white" />
+              <X size={14} className="text-white" />
             </button>
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent rounded-b-xl px-2 py-1">
+              <span className="text-white text-xs">列表图片</span>
+            </div>
           </div>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="p-4 border-t border-white/5 flex gap-2">
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*,.pdf"
-          onChange={handleFileSelect}
-          className="hidden"
-        />
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={isLoading}
-          className="w-10 h-10 rounded-full bg-[#2A2A2A] hover:bg-[#3A3A3A] border border-white/10 flex items-center justify-center transition-colors shrink-0 disabled:opacity-50"
-          title="Adjuntar imagen o PDF"
-        >
-          <Paperclip size={16} className="text-[#DEA71A]" />
-        </button>
-        <input
-          name="chat-input"
-          type="text"
-          placeholder={isLoading ? 'Escribiendo...' : 'Escribe tu respuesta...'}
-          disabled={isLoading}
-          className="flex-1 bg-[#2A2A2A] border border-white/10 rounded-full px-4 py-2.5 text-white text-sm placeholder-white/40 focus:outline-none focus:border-[#DEA71A] transition-colors disabled:opacity-50"
-        />
-        <button
-          type="submit"
-          disabled={isLoading || (!pendingImage)}
-          className="w-10 h-10 rounded-full bg-[#DEA71A] hover:bg-[#E1CB82] flex items-center justify-center transition-colors shrink-0 disabled:opacity-50"
-        >
-          {isLoading ? (
-            <Loader2 size={16} className="text-black animate-spin" />
-          ) : (
-            <Send size={16} className="text-black" />
-          )}
-        </button>
+      {/* Input area */}
+      <form onSubmit={handleSubmit} className="p-4 border-t border-white/5 bg-[#1A1A1A]">
+        <div className="flex items-center gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*,.pdf"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isLoading}
+            className="w-10 h-10 rounded-full bg-[#2A2A2A] hover:bg-[#3A3A3A] border border-white/10 flex items-center justify-center transition-colors shrink-0 disabled:opacity-50"
+            title="Adjuntar imagen o PDF"
+          >
+            <Paperclip size={18} className="text-[#DEA71A]" />
+          </button>
+          <div className="flex-1 relative">
+            <input
+              name="chat-input"
+              type="text"
+              placeholder={isLoading ? 'Escribiendo...' : 'Escribe tu respuesta...'}
+              disabled={isLoading}
+              className="w-full bg-[#2A2A2A] border border-white/10 rounded-full px-4 py-3 text-white text-sm placeholder-white/40 focus:outline-none focus:border-[#DEA71A]/50 focus:ring-1 focus:ring-[#DEA71A]/20 transition-all disabled:opacity-50"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isLoading || (!pendingImage)}
+            className="w-10 h-10 rounded-full bg-[#DEA71A] hover:bg-[#E1CB82] flex items-center justify-center transition-all shrink-0 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#DEA71A]/20"
+          >
+            {isLoading ? (
+              <Loader2 size={18} className="text-black animate-spin" />
+            ) : (
+              <Send size={18} className="text-black" />
+            )}
+          </button>
+        </div>
+        <div className="mt-2 text-center">
+          <span className="text-[#CCCBCD]/30 text-xs">
+            Powered by VIHO Arquitectura · Gemini AI
+          </span>
+        </div>
       </form>
+
+      {/* CSS for animations */}
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }
