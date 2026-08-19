@@ -42,7 +42,7 @@ Se ha completado la landing page (HU-01) y el agente pre-cotizador (HU-02) está
 
 **Estado:** Desplegada en Vercel. Pendientes del cliente: fotos de proyectos, foto de Sebastián, dirección exacta, teléfono, links de redes sociales.
 
-### HU-02 · Agente Pre-cotizador VIHO — 🔄 EN PROGRESO (75%)
+### HU-02 · Agente Pre-cotizador VIHO — 🔄 EN PROGRESO (85%)
 
 **Completado:**
 - Integración con Gemini 2.5 Flash (API route funcional)
@@ -52,11 +52,13 @@ Se ha completado la landing page (HU-01) y el agente pre-cotizador (HU-02) está
 - UI refinada con opciones como botones profesionales
 - Animaciones y diseño consistente con marca
 - Despliegue en Vercel con GEMINI_API_KEY configurada
+- **localStorage para persistencia de chat** (sobrevive refresh)
+- **Sistema de captura de leads** automático cuando usuario proporciona email
+- **Página /admin** con login (viho2026) y vista de leads
 
 **Pendiente:**
 - Motor de cálculo real (HU-03) — integrar precios de VIHO_data.xlsx
 - Generación de correos electrónicos
-- Captura de leads en base de datos
 - Selección de UI definitiva (FAB+Modal vs Full-screen)
 
 **Decisiones tomadas:**

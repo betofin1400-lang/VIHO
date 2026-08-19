@@ -27,9 +27,11 @@ El corazón del producto es un agente conversacional que:
 - ✅ Soporte para documentos efímeros (imágenes/PDFs como contexto, sin persistencia)
 - ✅ UI refinada con opciones como botones profesionales (letter indicators, animaciones)
 - ✅ Desplegado en Vercel con GEMINI_API_KEY configurada
+- ✅ **localStorage para persistencia de chat** (sobrevive refresh de página)
+- ✅ **Sistema de captura de leads** automático cuando usuario completa flujo
+- ✅ **Página /admin** con login (viho2026) y vista detallada de leads
 - 🔄 Motor de cálculo real pendiente (HU-03)
 - 🔄 Generación de correos pendiente
-- 🔄 Captura de leads pendiente
 
 ## Criterios de aceptación
 
