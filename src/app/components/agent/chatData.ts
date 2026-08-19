@@ -4,6 +4,11 @@ export interface ChatMessage {
   text: string;
   options?: string[];
   timestamp: Date;
+  image?: {
+    data: string; // base64
+    mimeType: string;
+    preview: string; // object URL for display
+  };
 }
 
 export const WELCOME_MESSAGE: ChatMessage = {
