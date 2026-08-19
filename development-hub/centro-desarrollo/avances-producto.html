@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bitácora — producto &mdash; VIHO Arquitectura</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="with-sidebar">
+<main class="main-content">
+<div class="container">
+
+    <div class="info-box">
+        <strong>Bit&aacute;cora del workspace <code>producto</code></strong> &mdash; Agente Pre-cotizador VIHO (formulario + motor de c&aacute;lculo + landing). El
+        <strong>%</strong> es real: cuenta los <strong>CA verificados con evidencia</strong>
+        (<code>CUMPLE</code>/total), no fases ni cobertura. <code>Confianza</code>: <code>auto</code>
+        (todo por test) o <code>confirmado</code> (validado por el dev). &nbsp;<a href="avances.html">&larr; Panorama</a>
+    </div>
+
+    <div class="info-box success">
+        <p><strong>Workspace: Producto</strong></p>
+        <p>Este es el &uacute;nico workspace del proyecto VIHO Arquitectura.</p>
+        <p><strong>Producto:</strong> Agente pre-cotizador de cocinas + landing page para WhatsApp.</p>
+        <p><strong>Qu&eacute; vive aqu&iacute;</strong></p>
+        <p>Todo el trabajo de desarrollo se organiza bajo este workspace como items: - <code>feat-*</code>: funcionalidades nuevas (motor de c&aacute;lculo, agente IA, etc.) - <code>change-*</code>: mejoras o ajustes a funcionalidad existente - <code>fix-*</code>: correcciones de bugs</p>
+        <p><strong>C&oacute;mo empezar</strong></p>
+        <ol>
+            <li>Crea una rama desde <code>master</code> (o desde el ambiente del que se dependa)</li>
+            <li>Documenta los requisitos en <code>&lt;item&gt;/docs/</code></li>
+            <li>Usa <code>/viho-forjar-skill producto/&lt;item&gt;</code> para generar el playbook</li>
+            <li>Desarrolla fase por fase con <code>/viho-desarrollar producto/&lt;item&gt;</code></li>
+        </ol>
+        <p><strong>Stack</strong></p>
+        <ul>
+            <li><strong>Frontend:</strong> Next.js 16 + React 19 + Tailwind 4 + shadcn/ui</li>
+            <li><strong>Backend:</strong> Next.js API routes</li>
+            <li><strong>Integraci&oacute;n:</strong> Google Drive API (service account)</li>
+            <li><strong>Despliegue:</strong> Vercel</li>
+        </ul>
+        <p><strong>Patrones relevantes</strong></p>
+        <ul>
+            <li><code>docs/front/01-paleta-marca-viho.md</code> &mdash; colores y sistema de dise&ntilde;o</li>
+            <li><code>docs/front/03-flujo-conversacion-agente.md</code> &mdash; flujo del agente</li>
+            <li><code>docs/back/02-motor-calculo-cotizacion.md</code> &mdash; motor de c&aacute;lculo</li>
+        </ul>
+    </div>
+
+    <div class="grid-5">
+        <div class="stat-card border-blue"><div class="num">1</div><div class="lbl">Funcionalidades</div></div>
+        <div class="stat-card border-info"><div class="num">0</div><div class="lbl">Pendientes</div></div>
+        <div class="stat-card border-warning"><div class="num">1</div><div class="lbl">En curso</div></div>
+        <div class="stat-card border-success"><div class="num">0</div><div class="lbl">Completadas</div></div>
+        <div class="stat-card border-teal"><div class="num">0%</div><div class="lbl">Avance (CAs) &middot; 0/0</div></div>
+    </div>
+
+    <h2 class="section-title">Estado de funcionalidades</h2>
+    <p>Click en una fila para ver su <strong>detalle</strong> (ramas, modelo/esfuerzo, fases,
+    veredicto por CA); el bot&oacute;n <strong>Log</strong> filtra el log de abajo por esa funcionalidad.</p>
+    <div class="table-scroll">
+    <table class="data-table" data-table="func" data-filters="tipo:Tipo,estado:Estado,autor:Autor" data-page-size="10">
+        <thead>
+            <tr><th>Item</th><th>Tipo</th><th>Autor</th><th>Fase</th><th>CAs</th><th>%</th><th>Confianza</th><th>Estado</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+            <tr class="item-row" data-item="feat-landing-page" data-tipo="" data-estado="en-curso" data-autor="">
+                <td><code>feat-landing-page</code></td>
+                <td></td>
+                <td></td>
+                <td>0/5</td>
+                <td>0/0</td>
+                <td>0%</td>
+                <td><span class="status status-progress">auto</span></td>
+                <td><span class="status status-warning">en-curso</span></td>
+                <td class="col-actions"><button class="btn-log" data-log-item="feat-landing-page">Log</button></td>
+            </tr>
+            <tr class="item-detail" data-detail-for="feat-landing-page">
+                <td colspan="9">
+                    <div class="detail-panel">
+                        <div class="dp-meta">
+                        </div>
+                        <p><strong>Estado actual</strong></p>
+                        <div class="table-scroll">
+                            <table>
+                                <thead><tr><th>Fase</th><th>Estado</th><th>%</th></tr></thead>
+                                <tbody>
+                                    <tr><td>An&aacute;lisis</td><td>✅ Completada</td><td>100%</td></tr>
+                                    <tr><td>Dise&ntilde;o</td><td>⬜ Pendiente</td><td>0%</td></tr>
+                                    <tr><td>Implementaci&oacute;n</td><td>⬜ Pendiente</td><td>0%</td></tr>
+                                    <tr><td>Verificaci&oacute;n</td><td>⬜ Pendiente</td><td>0%</td></tr>
+                                    <tr><td>Cierre</td><td>⬜ Pendiente</td><td>0%</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p><strong>Progreso total:</strong> 20%</p>
+                        <p><strong>Artefactos generados</strong></p>
+                        <p>[x] <code>docs/HU-01-landing-page.md</code> &mdash; Historia de usuario principal (10 CA)</p>
+                        <p>[x] <code>docs/_contexto-negocio.md</code> &mdash; Contexto y reglas del negocio</p>
+                        <p>[x] <code>contexto-tecnico.md</code> &mdash; Patrones seleccionados</p>
+                        <p>[x] <code>skills/SKILL.md</code> &mdash; Playbook del item</p>
+                        <p>[x] <code>casos-prueba.md</code> &mdash; Suite de casos de prueba (38 casos)</p>
+                        <p>[x] <code>progreso.md</code> &mdash; Estado del item</p>
+                        <p>[ ] <code>validacion-requisitos.md</code> &mdash; Prevalidaci&oacute;n de requisitos</p>
+                        <p>[ ] <code>analisis.md</code> &mdash; An&aacute;lisis detallado</p>
+                        <p>[ ] <code>plan.md</code> &mdash; Plan de implementaci&oacute;n</p>
+                        <p>[ ] <code>resultado.md</code> &mdash; Resultado de la implementaci&oacute;n</p>
+                        <p>[ ] <code>verificacion.md</code> &mdash; Evidencia de verificaci&oacute;n</p>
+                        <p><strong>Notas</strong></p>
+                        <p>2026-08-19: Fase de an&aacute;lisis completada. HU con 10 CA, 38 casos de prueba, playbook generado.</p>
+                        <p><strong>PENDIENTE:</strong> 8 preguntas abiertas requieren respuesta del cliente antes de Fase 2.</p>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+
+    <h2 class="section-title">Log de implementaci&oacute;n</h2>
+    <div class="info-box warning"><strong>Sin registro de actividad todav&iacute;a.</strong> Se alimenta de la secci&oacute;n <code>## Registro de actividad</code> de cada <code>progreso.md</code>.</div>
+
+
+
+</div>
+<footer class="page-footer"><strong>VIHO Arquitectura</strong> &mdash; Centro de desarrollo
+&bull; generado 2026-08-19 &bull; render 2.0.0</footer>
+</main>
+<script src="js/nav-data.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/bitacora.js"></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteca de patrones &mdash; VIHO Arquitectura</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="with-sidebar">
+<main class="main-content">
+<div class="container">
+
+    <div class="info-box"><strong>Patrones por slice &mdash; front: 2 &middot; back: 1.</strong> <strong>Los cuenta el generador</strong> recorriendo <code>docs/</code>: un conteo escrito a mano se desactualiza siempre.</div>
+<blockquote><strong>Qué es esto.</strong> El <strong>selector</strong> de la documentación técnica del proyecto. Indexa todo el set de patrones con una descripción <strong>«Cargar cuando…»</strong> por documento, para que —persona o agente— cargue <strong>solo</strong> los documentos que la tarea necesita, sin reinventar lo que ya existe.  <strong>Cómo usarlo (agente).</strong> 1) Identifica qué toca tu tarea. 2) Lee la columna «Cargar cuando…» y carga los <strong>3-8</strong> documentos cuyo trigger empareja, <strong>cubriendo ambos lados de cada costura</strong>. 3) Para el panorama, entra primero por <em><code>arquitectura-general.md</code></em>. 4) De cada documento cargado, extrae su bloque «Fuente de la verdad»: esas son tus anclas de código.  <strong>Calibración.</strong> Mejor 5 patrones que aplican de verdad que 15 «por si acaso». Si un trigger no empareja, no lo incluyas.  <strong>Autoridad.</strong> Ante divergencia entre este set y cualquier documentación anterior del repositorio, <strong>gana este set</strong>: sus afirmaciones están ancladas a rutas verificadas contra la rama principal.</blockquote>
+<div class="separator"></div>
+<h2 class="section-title">1. Navegación rápida por objetivo</h2>
+<div class="table-scroll"><table><thead><tr><th>Quiero…</th><th>Empieza por</th></tr></thead><tbody><tr><td>Entender el ecosistema completo</td><td><em><code>arquitectura-general.md</code></em></td></tr><tr><td>Cambiar colores, tipografía o estilos de la marca</td><td>front 01 → arquitectura §3</td></tr><tr><td>Implementar el motor de cálculo de cotizaciones</td><td>back 02 → back 04</td></tr><tr><td>Modificar el wizard de onboarding (pasos, campos)</td><td>front 03 → front 01</td></tr><tr><td>Configurar la integración con Google Drive</td><td>back 05</td></tr><tr><td>Entender las reglas de negocio del agente</td><td>back 04 → arquitectura §7</td></tr><tr><td>Agregar un nuevo tipo de proyecto o tipología</td><td>back 04 + front 03</td></tr></tbody></table></div>
+<h2 class="section-title">2. Front — <code>docs/front/</code></h2>
+<h3>UI / Marca</h3>
+<div class="table-scroll"><table><thead><tr><th>Doc</th><th>Tema</th><th>Cargar cuando…</th></tr></thead><tbody><tr><td><em>01</em></td><td>Paleta de marca VIHO y sistema de diseño</td><td>Cambies colores, crees componentes nuevos, modifiques <code>globals.css</code>, o verifiques contraste de la UI. Tocar cualquier referencia a <code>[#0E2B1D]</code>, <code>[#DEA71A]</code>, <code>[#E1CB82]</code>, <code>[#ADC2AF]</code>, <code>[#CCCBCD]</code>.</td></tr><tr><td><em>03</em></td><td>Flujo de conversación del agente pre-cotizador</td><td>Implementes el chat del agente, modifiques el orden de preguntas, o cambies el flujo de captura de leads. Toques <code>page.tsx</code> paso 3 o crees componentes del agente.</td></tr></tbody></table></div>
+<h2 class="section-title">3. Back — <code>docs/back/</code></h2>
+<h3>Motor de cálculo / Cotizaciones</h3>
+<div class="table-scroll"><table><thead><tr><th>Doc</th><th>Tema</th><th>Cargar cuando…</th></tr></thead><tbody><tr><td><em>02</em></td><td>Estructura de cotización y motor de cálculo</td><td>Crees o modifiques la API de cálculo de precios, cambies las reglas de negocio, o agregues categorías de materiales. Toques <code>src/app/api/</code> o crees endpoints nuevos de cálculo.</td></tr></tbody></table></div>
+<h2 class="section-title">4. Mapa de cruces entre slices</h2>
+<div class="table-scroll"><table><thead><tr><th>Costura</th><th>Front</th><th>Back</th></tr></thead><tbody><tr><td>Wizard → Google Drive</td><td>front 03 (flujo)</td><td>back 02 (motor) + back 05 (Drive)</td></tr><tr><td>Paleta de marca → UI</td><td>front 01 (colores)</td><td>—</td></tr><tr><td>Reglas de negocio → Cálculo</td><td>front 03 (preguntas)</td><td>back 02 (motor) + back 04 (reglas)</td></tr><tr><td>Lead capture → Correo</td><td>front 03 (contacto)</td><td>back 05 (Drive email)</td></tr></tbody></table></div>
+<h2 class="section-title">5. Convenciones del set</h2>
+<ul><li><code>NN</code> es identificador estable, append-only. <strong>Jamás se renumera.</strong></li><li><code>↳</code> marca un <strong>micro-patrón</strong> extraído de un documento padre (que lo enlaza y es enlazado).</li><li>Cada patrón abre con su bloque <strong>«Fuente de la verdad»</strong> (anclas de código, estado, espécimen).</li><li>Un patrón entra a <code>docs/</code> <strong>con su fila en este índice en el mismo cambio</strong>: un patrón sin trigger es invisible y no se carga nunca.</li><li>Los conteos de este archivo <strong>los deriva el script</strong>, no se escriben a mano.</li></ul>
+<h2 class="section-title">6. Decisiones (ADR)</h2>
+<div class="table-scroll"><table><thead><tr><th>ADR</th><th>Decisión</th><th>Cargar cuando…</th></tr></thead><tbody><tr><td>—</td><td>Pendiente: primera decisión documentada</td><td>—</td></tr></tbody></table></div>
+
+</div>
+<footer class="page-footer"><strong>VIHO Arquitectura</strong> &mdash; Centro de desarrollo
+&bull; generado 2026-08-19 &bull; render 2.0.0</footer>
+</main>
+<script src="js/nav-data.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/bitacora.js"></script>
+</body>
+</html>

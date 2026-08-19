@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arquitectura General &mdash; VIHO Arquitectura</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="with-sidebar">
+<main class="main-content">
+<div class="container">
+
+<blockquote><strong>Propósito:</strong> mapa del sistema para que cualquier persona o agente se ubique en una sentada. Único documento que se lee completo. Lo demás se carga selectivamente vía <code>index.md</code>.  <strong>Autoridad:</strong> este documento gana ante cualquier otra documentación previa del repositorio, porque sus afirmaciones están ancladas a rutas de código verificadas contra <code>main</code>.</blockquote>
+<div class="separator"></div>
+<h2 class="section-title">1. Qué es VIHO Arquitectura</h2>
+<p>Un <strong>agente pre-cotizador de IA</strong> que vive dentro de una página web y cotiza proyectos de arquitectura (cocinas, baños, estudios, closets) automáticamente, 24 horas al día.</p>
+<p>La persona entra, arma su proyecto y sale con un estimado de precio. El cliente (Sebastián Vizcaíno) recibe el contacto con todo el detalle, sin haber invertido un minuto.</p>
+<p><strong>Producto actual:</strong> formulario de onboarding de 5 pasos que captura la configuración del cliente y genera un espacio de trabajo en Google Drive (Sheets + carpeta).</p>
+<p><strong>Producto futuro:</strong> landing page completa + agente de IA embebido + motor de cálculo de cotizaciones.</p>
+<div class="separator"></div>
+<h2 class="section-title">2. Stack tecnológico</h2>
+<div class="table-scroll"><table><thead><tr><th>Capa</th><th>Tecnología</th><th>Versión</th></tr></thead><tbody><tr><td><strong>Framework</strong></td><td>Next.js (App Router)</td><td>16.3.0</td></tr><tr><td><strong>UI</strong></td><td>React</td><td>19.2.8</td></tr><tr><td><strong>Estilos</strong></td><td>Tailwind CSS</td><td>4.x</td></tr><tr><td><strong>Lenguaje</strong></td><td>TypeScript</td><td>5.x</td></tr><tr><td><strong>Iconos</strong></td><td>Lucide React</td><td>1.31.0</td></tr><tr><td><strong>APIs externas</strong></td><td>Google Drive API, Google Sheets API</td><td>googleapis@174.0.1</td></tr><tr><td><strong>Despliegue</strong></td><td>Vercel (configurado)</td><td>-</td></tr><tr><td><strong>Runtime</strong></td><td>Node.js</td><td>-</td></tr></tbody></table></div>
+<div class="separator"></div>
+<h2 class="section-title">3. Paleta de marca VIHO</h2>
+<blockquote><strong>Fuente:</strong> <code>docs/referencia/VIHO_Arquitectura_Libro_de_Marca.pdf</code> + <code>docs/referencia/Cotización_VIHO.pdf</code> <strong>Estado:</strong> verificada contra el código (<code>src/app/page.tsx</code> usa estos colores exactos)</blockquote>
+<div class="table-scroll"><table><thead><tr><th>Color</th><th>Código</th><th>Uso</th><th>Token en código</th></tr></thead><tbody><tr><td><strong>Verde oscuro</strong></td><td><code>#0E2B1D</code></td><td>Base, fondos, títulos, headers</td><td><code>[#0E2B1D]</code></td></tr><tr><td><strong>Dorado</strong></td><td><code>#DEA71A</code></td><td>Acentos, CTAs, bordes activos, progreso</td><td><code>[#DEA71A]</code></td></tr><tr><td><strong>Arena</strong></td><td><code>#E1CB82</code></td><td>Detalles, resaltados suaves, bordes</td><td><code>[#E1CB82]</code></td></tr><tr><td><strong>Salvia</strong></td><td><code>#ADC2AF</code></td><td>Fondos secundarios, líneas, acentos suaves</td><td><code>[#ADC2AF]</code></td></tr><tr><td><strong>Gris</strong></td><td><code>#CCCBCD</code></td><td>Texto de apoyo, bordes inactivos, placeholders</td><td><code>[#CCCBCD]</code></td></tr><tr><td><strong>Blanco</strong></td><td><code>#FAFAFA</code></td><td>Fondo principal de la app</td><td><code>[#FAFAFA]</code></td></tr></tbody></table></div>
+<h3>Reglas de uso de la paleta</h3>
+<ul><li><strong>Nunca hardcodear colores</strong> en componentes. Definir tokens en <code>globals.css</code> o en un archivo de constantes.</li><li><strong> Verde oscuro</strong> = estructura (headers, footers, fondos de sección).</li><li><strong> Dorado</strong> = acción (botones primarios, indicadores de progreso, links activos).</li><li><strong> Arena</strong> = énfasis suave (borders hover, fondos de cards alternas).</li><li><strong> Salvia</strong> = secundario (badges, iconos secundarios, divisiones).</li><li><strong> Gris</strong> = texto de soporte, labels, placeholders.</li></ul>
+<div class="separator"></div>
+<h2 class="section-title">4. Arquitectura del sistema</h2>
+<pre><code>┌─────────────────────────────────────────────────────┐
+│                    FRONTEND                          │
+│                                                      │
+│  src/app/page.tsx      ← Wizard onboarding 5 pasos  │
+│  src/app/layout.tsx    ← Layout global               │
+│  src/app/globals.css   ← Estilos + paleta            │
+│                                                      │
+│  ┌──────────────────────────────────────────────┐   │
+│  │  Paso 1: Datos generales (nombre, correo)    │   │
+│  │  Paso 2: Diseño web (estructura, secciones)  │   │
+│  │  Paso 3: Config agente (tipos, reglas)       │   │
+│  │  Paso 4: Accesos técnicos (dominio, hosting) │   │
+│  │  Paso 5: Éxito (links a Drive)               │   │
+│  └──────────────────────────────────────────────┘   │
+│                                                      │
+│  Estado: localStorage con expiración de 24h          │
+└──────────────────────┬──────────────────────────────┘
+                       │ fetch()
+                       ▼
+┌─────────────────────────────────────────────────────┐
+│                   API ROUTES                         │
+│                                                      │
+│  src/app/api/check-status/route.ts                  │
+│    → GET: verifica si ya se generó el espacio        │
+│                                                      │
+│  src/app/api/generate-workspace/route.ts            │
+│    → POST: crea carpeta + hoja en Google Drive       │
+│                                                      │
+└──────────────────────┬──────────────────────────────┘
+                       │ Google API
+                       ▼
+┌─────────────────────────────────────────────────────┐
+│                GOOGLE DRIVE API                      │
+│                                                      │
+│  1. Crear carpeta del cliente                        │
+│  2. Crear Google Sheet (Brief + Reglas de Negocio)   │
+│  3. Devolver links al frontend                       │
+│                                                      │
+│  Credenciales: google-credentials.json (service acc) │
+└─────────────────────────────────────────────────────┘</code></pre>
+<div class="separator"></div>
+<h2 class="section-title">5. Tabla de costuras (autoridad de datos)</h2>
+<div class="table-scroll"><table><thead><tr><th>Frontera</th><th>Dato</th><th>Autoridad</th><th>Notas</th></tr></thead><tbody><tr><td>Front → API</td><td>formData del wizard</td><td><strong>Frontend</strong> (<code>page.tsx</code>)</td><td>El wizard es la fuente</td></tr><tr><td>API → Google Drive</td><td>Estructura de carpeta</td><td><strong>API</strong> (<code>generate-workspace/route.ts</code>)</td><td>Define qué carpetas crea</td></tr><tr><td>API → Google Sheets</td><td>Contenido del Sheet</td><td><strong>API</strong> (<code>generate-workspace/route.ts</code>)</td><td>Brief + Reglas</td></tr><tr><td>Google Drive → App</td><td>Links de acceso</td><td><strong>Google Drive API</strong></td><td>Devueltos al frontend</td></tr><tr><td>Cliente → App</td><td>Configuración</td><td><strong>Excel del cliente</strong> (<code>VIHO_data.xlsx</code>)</td><td>Fuente de reglas de negocio</td></tr><tr><td>Marca → App</td><td>Colores, tipografía</td><td><strong>Libro de Marca</strong> (<code>docs/referencia/</code>)</td><td>Verificada en código</td></tr></tbody></table></div>
+<div class="separator"></div>
+<h2 class="section-title">6. Datos del cliente (brief real — primer caso)</h2>
+<blockquote><strong>Fuente:</strong> <code>VIHO_data.xlsx</code> hoja &quot;Brief de Configuración&quot;</blockquote>
+<div class="table-scroll"><table><thead><tr><th>Campo</th><th>Valor</th></tr></thead><tbody><tr><td>Contacto</td><td>Sebastián Vizcaíno Hoyos</td></tr><tr><td>Correo</td><td>sebastianvizcaino@vihoarquitectura.co</td></tr><tr><td>Empresa</td><td>BUHO ARQUITECTOS S.A.S (NIT 901428571)</td></tr><tr><td>Dominio</td><td>vihoarquitectura.com</td></tr><tr><td>Hosting</td><td>WorkSpace (paquete con dominio de correos)</td></tr><tr><td>Estructura web</td><td>Landing Page (One-page)</td></tr><tr><td>Enfoque diseño</td><td>PC / Tablet First</td></tr><tr><td>Secciones</td><td>Portafolio, Servicios, Contacto, Sobre mí</td></tr><tr><td>Estilo visual</td><td>Oscuro / elegante</td></tr><tr><td>Referencias</td><td>mdvarquitectura.com, ariassernasaravia.com.co</td></tr><tr><td>Tipos de proyecto</td><td>Cocinas, Baños, Estudios, Closets</td></tr><tr><td>Tipologías cocina</td><td>Lineal, En L, Con Península, En Isla, Todas</td></tr></tbody></table></div>
+<div class="separator"></div>
+<h2 class="section-title">7. Reglas de negocio del agente</h2>
+<blockquote><strong>Fuente:</strong> <code>VIHO_data.xlsx</code> hoja &quot;Reglas de Negocio&quot;</blockquote>
+<h3>7.1 Transporte (fijo por ciudad)</h3>
+<div class="table-scroll"><table><thead><tr><th>Ciudad</th><th>Valor</th></tr></thead><tbody><tr><td>Cali</td><td>$350.000</td></tr><tr><td>Popayán</td><td>$850.000</td></tr><tr><td>Eje Cafetero</td><td>$900.000</td></tr><tr><td>Pasto</td><td>$1.600.000</td></tr></tbody></table></div>
+<h3>7.2 Costos obligatorios (visita + diseño + render)</h3>
+<div class="table-scroll"><table><thead><tr><th>Ciudad</th><th>Valor</th></tr></thead><tbody><tr><td>Cali</td><td>$450.000</td></tr><tr><td>Popayán, Eje Cafetero, Pasto</td><td>$650.000</td></tr></tbody></table></div>
+<h3>7.3 Siempre incluir en toda cotización</h3>
+<ul><li>Muebles</li><li>Herrajes</li><li>Accesorios</li><li>Mesones</li><li>Electrodomésticos</li></ul>
+<h3>7.4 Compromisos de entrega</h3>
+<ul><li>Visita técnica: máximo 3 días hábiles</li><li>Diseño y cotización: máximo 7 días hábiles</li><li>Ajustes: máximo 48 horas hábiles</li><li>Entrega: hasta 40 días calendario (tras aprobación + anticipo)</li></ul>
+<div class="separator"></div>
+<h2 class="section-title">8. Ejemplo real de cotización</h2>
+<blockquote><strong>Fuente:</strong> <code>docs/referencia/ALFA CALI MAURICIO FORERO .pdf</code></blockquote>
+<p>Cocina para Mauricio Forero en Cali — <strong>$12.741.360 COP</strong>:</p>
+<div class="table-scroll"><table><thead><tr><th>Componente</th><th>Detalle</th><th>Valor</th></tr></thead><tbody><tr><td>Muebles</td><td>Duratex 15mm Cinza + Verde Olivo</td><td>Incluido</td></tr><tr><td>Herrajes</td><td>Blum (bisagras Unihopper, correderas)</td><td>$2.579.560</td></tr><tr><td>Perfilería</td><td>Gola + vidrio templado humo</td><td>Variable</td></tr><tr><td>Mesón</td><td>Piedra sinterizada Altea Calcattra Royale 12mm</td><td>Variable</td></tr><tr><td>LED</td><td>110V luz cálida</td><td>Variable</td></tr></tbody></table></div>
+<p><strong>Este es el tipo de estructura que el motor de cálculo debe replicar.</strong></p>
+<div class="separator"></div>
+<h2 class="section-title">9. Espacios de nombres</h2>
+<div class="table-scroll"><table><thead><tr><th>Espacio</th><th>Descripción</th></tr></thead><tbody><tr><td><code>src/app/</code></td><td>Next.js App Router (páginas y layouts)</td></tr><tr><td><code>src/app/api/</code></td><td>API Routes (serverless functions)</td></tr><tr><td><code>docs/</code></td><td>Documentación técnica del proyecto (patrones)</td></tr><tr><td><code>docs/referencia/</code></td><td>Documentos originales del cliente (PDFs, imágenes)</td></tr><tr><td><code>.work/</code></td><td>Items de trabajo en curso</td></tr><tr><td><code>development-hub/</code></td><td>Centro de desarrollo</td></tr></tbody></table></div>
+<div class="separator"></div>
+<h2 class="section-title">10. ¿Dónde vive mi cambio?</h2>
+<div class="table-scroll"><table><thead><tr><th>Si vas a cambiar…</th><th>Empieza por…</th></tr></thead><tbody><tr><td>El wizard de onboarding (pasos, campos, diseño)</td><td><code>src/app/page.tsx</code></td></tr><tr><td>La integración con Google Drive</td><td><code>src/app/api/generate-workspace/route.ts</code></td></tr><tr><td>La verificación de estado</td><td><code>src/app/api/check-status/route.ts</code></td></tr><tr><td>Los colores de la marca</td><td><code>src/app/globals.css</code> + tokens de Tailwind</td></tr><tr><td>Las reglas de negocio del agente</td><td>API route del motor de cálculo (futuro)</td></tr><tr><td>El flujo de conversación del agente</td><td>Componente del agente embebido (futuro)</td></tr><tr><td>La landing page completa</td><td>Nuevas páginas en <code>src/app/</code></td></tr></tbody></table></div>
+<div class="separator"></div>
+<h2 class="section-title">11. Documentos de referencia</h2>
+<div class="table-scroll"><table><thead><tr><th>Archivo</th><th>Contenido</th><th>Ubicación</th></tr></thead><tbody><tr><td>Libro de Marca VIHO</td><td>Colores, tipografía, logo, aplicaciones</td><td><code>docs/referencia/VIHO_Arquitectura_Libro_de_Marca.pdf</code></td></tr><tr><td>Cotización VIHO</td><td>Propuesta comercial al cliente</td><td><code>docs/referencia/Cotización_VIHO.pdf</code></td></tr><tr><td>Cotización Mauricio Forero</td><td>Ejemplo real de cocina cotizada</td><td><code>docs/referencia/ALFA CALI MAURICIO FORERO .pdf</code></td></tr><tr><td>Formulario Página Web</td><td>Formulario de captura de datos</td><td><code>docs/referencia/Formulario-PaginaWeb.pdf</code></td></tr><tr><td>Imágenes marca</td><td>6 imágenes del libro de marca</td><td><code>docs/referencia/VIHO_marca_0*.png</code></td></tr><tr><td>Datos del cliente</td><td>Excel con brief + reglas de negocio</td><td><code>VIHO_data.xlsx</code> (raíz del repo)</td></tr><tr><td>Materiales presu_costo</td><td>Lista de 200+ materiales con precios</td><td><code>docs/materiales_presucosto_completo.xlsx</code></td></tr></tbody></table></div>
+
+</div>
+<footer class="page-footer"><strong>VIHO Arquitectura</strong> &mdash; Centro de desarrollo
+&bull; generado 2026-08-19 &bull; render 2.0.0</footer>
+</main>
+<script src="js/nav-data.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/bitacora.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bitácora / Avances — Panorama &mdash; VIHO Arquitectura</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="with-sidebar">
+<main class="main-content">
+<div class="container">
+
+    <div class="info-box">
+        <strong>Panorama de avances</strong> &mdash; vista agregada por workspace. El detalle de cada
+        &aacute;rea vive en su propia p&aacute;gina (submen&uacute; <em>Bit&aacute;cora</em>). El estado lo escribe
+        <code>/desarrollar</code> en <code>.work/&lt;ws&gt;/&lt;item&gt;/progreso.md</code>; esta bit&aacute;cora solo lo
+        <strong>renderiza</strong> (100% est&aacute;tico, sin base de datos).
+    </div>
+
+    <div class="info-box success">
+        <p><strong>Estado actual</strong></p>
+        <p>{{TODO: dos o tres p&aacute;rrafos. Qu&eacute; se est&aacute; construyendo ahora y por qu&eacute; en ese orden. Qu&eacute; est&aacute; bloqueado y a la espera de qu&eacute;. Qu&eacute; se decidi&oacute; recientemente que cambia el rumbo. Qu&eacute; aprendi&oacute; el equipo que valga la pena que un reci&eacute;n llegado sepa antes de mirar las tablas.}}</p>
+        <p><strong>C&oacute;mo leer este tablero</strong></p>
+        <ul>
+            <li>El <strong>porcentaje</strong> de un item son sus <strong>criterios de aceptaci&oacute;n verificados con evidencia ejecutada</strong>, sobre el total de criterios. No son tareas cerradas ni cobertura de c&oacute;digo.</li>
+            <li><strong>Confianza <code>auto</code></strong>: toda la evidencia es autom&aacute;tica. <strong><code>confirmado</code></strong>: alg&uacute;n criterio necesit&oacute; validaci&oacute;n humana y alguien la firm&oacute;.</li>
+            <li>Un item <strong>completado</strong> est&aacute; al 100 %. Un item al 90 % <strong>no est&aacute; casi listo</strong>: tiene un criterio que no cumple, y se puede ver cu&aacute;l desplegando su detalle.</li>
+        </ul>
+    </div>
+
+    <div class="grid-5">
+        <div class="stat-card border-blue"><div class="num">1</div><div class="lbl">Funcionalidades</div></div>
+        <div class="stat-card border-info"><div class="num">0</div><div class="lbl">Pendientes</div></div>
+        <div class="stat-card border-warning"><div class="num">1</div><div class="lbl">En curso</div></div>
+        <div class="stat-card border-success"><div class="num">0</div><div class="lbl">Completadas</div></div>
+        <div class="stat-card border-teal"><div class="num">0%</div><div class="lbl">Avance (CAs) &middot; 0/0</div></div>
+    </div>
+
+    <h2 class="section-title">Panorama por workspace</h2>
+    <div class="table-scroll">
+    <table class="data-table" data-table="ws" data-page-size="20">
+        <thead>
+            <tr><th>Workspace</th><th>&Aacute;rea</th><th>Items</th><th>Pendientes</th><th>En curso</th><th>Completadas</th><th>Avance % (CAs)</th><th>Detalle</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><code>producto</code></td><td>Agente Pre-cotizador VIHO (formulario + motor de c&aacute;lculo + landing)</td><td>1</td><td>0</td><td>1</td><td>0</td><td>0% <small>(0/0)</small></td><td><a href="avances-producto.html">Abrir</a></td></tr>
+            <tr><td><strong>Total</strong></td><td></td><td><strong>1</strong></td><td><strong>0</strong></td><td><strong>1</strong></td><td><strong>0</strong></td><td><strong>0%</strong> <small>(0/0)</small></td><td></td></tr>
+        </tbody>
+    </table>
+    </div>
+
+
+
+</div>
+<footer class="page-footer"><strong>VIHO Arquitectura</strong> &mdash; Centro de desarrollo
+&bull; generado 2026-08-19 &bull; render 2.0.0</footer>
+</main>
+<script src="js/nav-data.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/bitacora.js"></script>
+</body>
+</html>

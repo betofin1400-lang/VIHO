@@ -1,0 +1,9 @@
+# --- Centro de desarrollo ---------------------------------------------------
+# Override LOCAL del marcador: dónde vive el código EN ESTA máquina.
+# Nunca se versiona; cada quien tiene el suyo. Si alguien lo commitea, el resto del equipo
+# hereda rutas que en su disco no existen y la guardia de rama evalúa el repo equivocado.
+.centro-desarrollo.local.json
+
+# Caché de bytecode de los scripts del centro (renderer, doctor, utilidades)
+__pycache__/
+*.pyc

@@ -1,0 +1,30 @@
+{
+  "_nota": "Override LOCAL (por máquina o por equipo) del marcador compartido .centro-desarrollo.json. Copia este archivo a .centro-desarrollo.local.json (que está en .gitignore) y ajusta SOLO lo que difiera en tu máquina. Los scripts lo leen con PRECEDENCIA sobre el marcador. Existe porque el marcador está versionado y es compartido, pero dónde vive el código en el disco cambia por persona: quien clona en otra ruta, quien renombró las carpetas, quien tiene un servicio montado en Docker fuera del árbol.",
+
+  "_como": [
+    "root_rel = ruta relativa DESDE el centro HASTA la raíz de código. Normalmente '..'.",
+    "repos.<alias>.ruta = ruta relativa desde esa raíz hasta el repositorio (o el directorio del monorepo). Puede ser multi-segmento, y '.' si el repo ES la raíz.",
+    "Pon aquí SOLO lo que difiera. Un override completo es una copia que se desactualiza sola."
+  ],
+
+  "_ejemplos": {
+    "monorepo, el centro cuelga de la raíz": {
+      "root_rel": "..",
+      "repos": { "api": { "ruta": "backend" }, "web": { "ruta": "frontend" } }
+    },
+    "repos hermanos en carpetas contenedoras distintas a las del marcador": {
+      "root_rel": "..",
+      "repos": { "api": { "ruta": "servicios/api" }, "web": { "ruta": "clientes/web" } }
+    },
+    "un servicio clonado fuera del árbol del proyecto": {
+      "repos": { "api": { "ruta": "../../otro-sitio/api" } }
+    }
+  },
+
+  "codigo": {
+    "root_rel": "..",
+    "repos": {
+      "{{ALIAS}}": { "ruta": "{{RUTA_REAL_EN_TU_MAQUINA}}" }
+    }
+  }
+}

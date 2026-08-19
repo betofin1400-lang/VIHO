@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Google Cloud Credentials
 google-credentials.json
+
+# OpenCode
+.opencode/

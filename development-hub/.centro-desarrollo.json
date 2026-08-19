@@ -1,0 +1,54 @@
+{
+  "centro": "VIHO Arquitectura",
+  "formato": "1.0",
+  "descripcion": "Centro de desarrollo del agente pre-cotizador VIHO Arquitectura. Next.js 16 + Google Drive API. Monorepo único.",
+
+  "paths": {
+    "hub": ".",
+    "docs": "docs",
+    "index": "docs/index.md",
+    "arquitectura": "docs/arquitectura-general.md",
+    "lecciones": "docs/lecciones.md",
+    "decisiones": "docs/decisiones",
+    "work": ".work",
+    "skills": ".claude/skills",
+    "config": ".claude/config-proyecto.md",
+    "sitio": "centro-desarrollo",
+    "paginas": "paginas",
+    "recursos": "resources"
+  },
+
+  "docs": {
+    "slices": ["front", "back"]
+  },
+
+  "codigo": {
+    "root_rel": "..",
+    "repos": {
+      "web": { "ruta": ".", "slice": "front", "desc": "Next.js 16 App Router — formulario onboarding + landing" },
+      "api": { "ruta": "src/app/api", "slice": "back", "desc": "API Routes Next.js — Google Drive/Sheets integration" }
+    }
+  },
+
+  "workspaces": {
+    "producto": { "repos": ["web", "api"], "desc": "Agente Pre-cotizador VIHO (formulario + motor de cálculo + landing)" }
+  },
+
+  "git": {
+    "principales": ["main"],
+    "base_por_defecto": "main",
+    "convencion_rama": "<tipo>/<TICKET>-<slug>"
+  },
+
+  "doctor": {
+    "skills_requeridas": [
+      "viho-centro",
+      "viho-forjar-skill",
+      "viho-desarrollar",
+      "viho-casos-prueba",
+      "viho-centro-doctor"
+    ],
+    "config_secciones": [1, 2, 3, 5, 7, 9, 10, 13, 17, 18, 21],
+    "min_patrones": 0
+  }
+}
