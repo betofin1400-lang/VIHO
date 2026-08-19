@@ -7,9 +7,7 @@
 
 ## Estado actual
 
-{{TODO: dos o tres párrafos. Qué se está construyendo ahora y por qué en ese orden. Qué está
-bloqueado y a la espera de qué. Qué se decidió recientemente que cambia el rumbo. Qué aprendió el
-equipo que valga la pena que un recién llegado sepa antes de mirar las tablas.}}
+Se ha completado la landing page (HU-01) y el agente pre-cotizador (HU-02) está en fase de refinamiento. La landing page tiene 8 componentes funcionales con estilo oscuro/elegante y colores de marca VIHO. El agente pre-cotizador está integrado con Gemini 2.5 Flash, con system prompt maestro que incluye flujo de 4 preguntas, manejo de objeciones y soporte para documentos efímeros. La UI del chat ha sido refinada con opciones como botones profesionales, animaciones y diseño consistente con la marca. Todo está desplegado en Vercel con variables de entorno configuradas.
 
 ## Cómo leer este tablero
 
@@ -24,6 +22,45 @@ equipo que valga la pena que un recién llegado sepa antes de mirar las tablas.}
 
 | Workspace | Área | Items | Pendientes | En curso | Completadas | Avance % (CAs) |
 |-----------|------|-------|------------|----------|-------------|----------------|
-| `producto` | Agente Pre-cotizador VIHO (formulario + motor de cálculo + landing) | 1 | 0 | 1 | 0 | 0% (0/0) |
-| **Total** | | **1** | **0** | **1** | **0** | **0% (0/0)** |
+| `producto` | Landing Page VIHO | 1 | 0 | 0 | 1 | 100% (10/10) |
+| `producto` | Agente Pre-cotizador VIHO | 1 | 0 | 1 | 0 | 75% (9/12) |
+| **Total** | | **2** | **0** | **1** | **1** | **86% (19/22)** |
 
+## Detalle por item
+
+### HU-01 · Landing Page VIHO — ✅ COMPLETADA (100%)
+
+**Componentes implementados:**
+- Nav (sticky + blur + menú hamburguesa)
+- Hero (full-screen + CTA)
+- Portafolio (grid + modal + load more, 6 proyectos mixtos)
+- Servicios (grid 2x2 con íconos)
+- SobreMi (layout 2 columnas)
+- Contacto (formulario + mapa iframe)
+- Footer (copyright + redes sociales)
+- ProjectModal (modal reutilizable)
+
+**Estado:** Desplegada en Vercel. Pendientes del cliente: fotos de proyectos, foto de Sebastián, dirección exacta, teléfono, links de redes sociales.
+
+### HU-02 · Agente Pre-cotizador VIHO — 🔄 EN PROGRESO (75%)
+
+**Completado:**
+- Integración con Gemini 2.5 Flash (API route funcional)
+- System prompt maestro con flujo de 4 preguntas
+- Manejo de objeciones (no ser biblioteca de valores)
+- Soporte para documentos efímeros (imágenes/PDFs como contexto)
+- UI refinada con opciones como botones profesionales
+- Animaciones y diseño consistente con marca
+- Despliegue en Vercel con GEMINI_API_KEY configurada
+
+**Pendiente:**
+- Motor de cálculo real (HU-03) — integrar precios de VIHO_data.xlsx
+- Generación de correos electrónicos
+- Captura de leads en base de datos
+- Selección de UI definitiva (FAB+Modal vs Full-screen)
+
+**Decisiones tomadas:**
+- Modelo: Gemini 2.5 Flash (Google AI Studio) — gemini-2.0 deprecado, gemini-3.6 con 503s
+- UI: Dos prototipos funcionales para que el cliente decida
+- Documentos: Solo contexto efímero, sin persistencia (privacidad)
+- Flujo: 4 preguntas clave + captura de contacto al final

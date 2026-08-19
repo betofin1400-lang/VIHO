@@ -21,7 +21,15 @@ El corazón del producto es un agente conversacional que:
   - **Opción A:** Botón flotante (FAB) que abre chat tipo modal → `/agente`
   - **Opción B:** Interfaz directa (pantalla completa dentro del sitio) → `/agente-directo`
 
-**Estado actual:** Integración con Gemini 2.5 Flash implementada. API route funcional. Prototipos con respuestas reales del agente. Welcome message filtrado del historial (Gemini requiere que el primer mensaje sea `user`).
+**Estado actual:** 
+- ✅ Integración con Gemini 2.5 Flash implementada y funcionando
+- ✅ API route con system prompt maestro (flujo 4 preguntas + manejo de objeciones)
+- ✅ Soporte para documentos efímeros (imágenes/PDFs como contexto, sin persistencia)
+- ✅ UI refinada con opciones como botones profesionales (letter indicators, animaciones)
+- ✅ Desplegado en Vercel con GEMINI_API_KEY configurada
+- 🔄 Motor de cálculo real pendiente (HU-03)
+- 🔄 Generación de correos pendiente
+- 🔄 Captura de leads pendiente
 
 ## Criterios de aceptación
 
